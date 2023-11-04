@@ -12,7 +12,7 @@ Custom build of [**st**](https://st.suckless.org/) with various patches applied:
 + **ligatures** for drawing proper ligatures.
 + **newterm** allows opening a new terminal in the cwd with `mod + shift + return`.
 + **scrollback** with mouse support.
-+ undercurl for special underlines.
++ **undercurl** for special underlines.
 + **wide_glyphs** allows `st` to draw glyphs properly instead of cutting them off.
 + **xresources** to configure colours, transparency, and font settings via Xresources.
 
