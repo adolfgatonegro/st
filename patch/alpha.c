@@ -17,6 +17,7 @@ changealpha(const Arg *arg)
 	redraw();
 }
 
+#if ALPHA_FOCUS_HIGHLIGHT_PATCH
 void
 changealphaunfocused(const Arg *arg)
 {
@@ -26,3 +27,4 @@ changealphaunfocused(const Arg *arg)
 	xloadcols();
 	redraw();
 }
+#endif // ALPHA_FOCUS_HIGHLIGHT_PATCH

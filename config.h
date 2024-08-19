@@ -9,6 +9,10 @@ static char *font = "mono:pixelsize=9:antialias=true:autohint=true";
 static char *font2[] = {"JoyPixels:pixelsize=12:antialias=true:autohint=true"};
 static int borderpx = 20;
 
+/* modkey options: ControlMask, ShiftMask or XK_ANY_MOD */
+static uint url_opener_modkey = XK_ANY_MOD;
+static char *url_opener = "xdg-open";
+
 /*
  * What program is execed by st depends of these precedence rules:
  * 1: program passed with -e
@@ -24,7 +28,10 @@ char *scroll = NULL;
 char *stty_args = "stty raw pass8 nl -echo -iexten -cstopb 38400";
 
 /* identification sequence returned in DA and DECID */
-char *vtiden = "\033[?6c";
+char *vtiden = "\033[?62;4c"; /* VT200 family (62) with sixel (4) */
+
+/* sixel rgb byte order: LSBFirst or MSBFirst */
+int const sixelbyteorder = LSBFirst;
 
 /* Kerning / character bounding-box multipliers */
 static float cwscale = 1.0;
@@ -54,9 +61,8 @@ int allowwindowops = 0;
  * near minlatency, but it waits longer for slow updates to avoid partial draw.
  * low minlatency will tear/flicker more, as it can "detect" idle too early.
  */
-static double minlatency = 8;
+static double minlatency = 2;
 static double maxlatency = 33;
-
 
 /*
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
@@ -109,7 +115,7 @@ unsigned int tabspaces = 8;
 
 /* bg opacity */
 float alpha = 0.85;
-float alphaUnfocused = 0.80;
+float alphaUnfocused = 0.8;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
@@ -142,7 +148,6 @@ static const char *colorname[] = {
 	"#white", /* 259 -> fg */
 };
 
-
 /*
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
@@ -152,7 +157,6 @@ unsigned int bg = 258, bgUnfocused = 258;
 unsigned int defaultfg = 7;
 unsigned int defaultcs = 6;
 unsigned int defaultrcs = 7;
-
 
 /*
  * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
@@ -241,9 +245,9 @@ static uint forcemousemod = ShiftMask;
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release  screen */
-	{ XK_NO_MOD,            Button4, kscrollup,      {.i = 1},      0, S_PRI},
-	{ XK_NO_MOD,            Button5, kscrolldown,    {.i = 1},      0, S_PRI},
-	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
+	{ XK_ANY_MOD,           Button2, clippaste,      {.i = 0},      1 },
+	{ ShiftMask,            Button4, kscrollup,      {.i = 1},      0, S_PRI},
+	{ ShiftMask,            Button5, kscrolldown,    {.i = 1},      0, S_PRI},
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
 	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
 };
@@ -275,8 +279,8 @@ static Shortcut shortcuts[] = {
 	//{ TERMMOD,              XK_,           changealphaunfocused, {.f = -0.05} },
 	{ TERMMOD,              XK_K,           kscrollup,       {.i = -1} },
 	{ TERMMOD,              XK_J,           kscrolldown,     {.i = -1} },
-	{ TERMMOD,              XK_Y,           selpaste,        {.i =  0} },
-	{ ShiftMask,            XK_Insert,      selpaste,        {.i =  0} },
+	{ TERMMOD,              XK_Y,           clippaste,       {.i =  0} },
+	{ ShiftMask,            XK_Insert,      clippaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,         {.i =  0} },
 	{ ControlMask|ShiftMask,XK_Return,      newterm,         {.i =  0} },
 	{ MODKEY,               XK_u,           externalpipe,   {.v = openurlcmd } },
@@ -577,4 +581,3 @@ static char ascii_printable[] =
 #define UNDERCURL_CAPPED 2
 // Active style
 #define UNDERCURL_STYLE UNDERCURL_SPIKY
-
