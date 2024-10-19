@@ -253,8 +253,8 @@ static MouseShortcut mshortcuts[] = {
 };
 
 /* Internal keyboard shortcuts. */
-#define MODKEY Mod4Mask
-#define TERMMOD (Mod4Mask|ShiftMask)
+#define MODKEY Mod1Mask
+#define TERMMOD (Mod1Mask|ShiftMask)
 
 static char *openurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -o", "externalpipe", NULL };
 static char *copyurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -c", "externalpipe", NULL };
@@ -266,9 +266,9 @@ static Shortcut shortcuts[] = {
 	{ ControlMask,          XK_Print,       toggleprinter,   {.i =  0} },
 	{ ShiftMask,            XK_Print,       printscreen,     {.i =  0} },
 	{ XK_ANY_MOD,           XK_Print,       printsel,        {.i =  0} },
-	{ Mod1Mask|ShiftMask,   XK_plus,        zoom,            {.f = +1} },
-	{ Mod1Mask|ShiftMask,   XK_underscore,  zoom,            {.f = -1} },
-	{ Mod1Mask|ShiftMask,   XK_BackSpace,   zoomreset,       {.f =  0} },
+	{ MODKEY|ShiftMask,     XK_plus,        zoom,            {.f = +1} },
+	{ MODKEY|ShiftMask,     XK_underscore,  zoom,            {.f = -1} },
+	{ MODKEY|ShiftMask,     XK_BackSpace,   zoomreset,       {.f =  0} },
 	{ MODKEY|ShiftMask,     XK_C,           clipcopy,        {.i =  0} },
 	{ MODKEY|ShiftMask,     XK_V,           clippaste,       {.i =  0} },
 	//{ MODKEY,               XK_a,           changealpha,     {.f = +0.05} },
